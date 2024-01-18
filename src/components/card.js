@@ -1,6 +1,7 @@
 const cardTemplate = document.querySelector('#card-template').content;
+const cardsList = document.querySelector('.places__list'); // list of cards
 
-export function prepareCard(cardData, removeCallback, likeCallback, openImageCallback) {
+function prepareCard(cardData, removeCallback, likeCallback, openImageCallback) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardLike = cardElement.querySelector('.card__like-button');
@@ -17,3 +18,17 @@ export function prepareCard(cardData, removeCallback, likeCallback, openImageCal
 
   return cardElement;
 }
+
+function addCard(cardElement) {
+  cardsList.prepend(cardElement);
+}
+
+function removeCard(element) { // remove card callback
+  element.remove();
+}
+
+function likeCard(evt) { // like card callback
+  evt.target.classList.toggle('card__like-button_is-active');
+}
+
+export {prepareCard, addCard, removeCard, likeCard}

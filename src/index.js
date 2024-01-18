@@ -1,6 +1,17 @@
-import { prepareCard } from "./components/card.js";
-import { initialCards } from './components/cards'
-import { openModal, closeModal, closeModalOverlay } from "./components/modal.js";
+import {
+  prepareCard,
+  addCard,
+  removeCard,
+  likeCard
+} from "./components/card.js";
+import {
+  initialCards
+} from './components/cards'
+import {
+  openModal,
+  closeModal,
+  closeModalOverlay
+} from "./components/modal.js";
 import './pages/index.css';
 
 const cardsList = document.querySelector('.places__list'); // list of cards
@@ -23,18 +34,6 @@ const jobInputProfile = formElementProfile.querySelector('.popup__input_type_des
 const formElementCard = document.forms['new-place'];
 const nameInputCard = formElementCard.querySelector('.popup__input_type_card-name');
 const linkInputCard = formElementCard.querySelector('.popup__input_type_url');
-
-function addCard(cardElement) {
-  cardsList.prepend(cardElement);
-}
-
-function removeCard(element) { // remove card callback
-  element.remove();
-}
-
-function likeCard(evt) { // like card callback
-  evt.target.classList.toggle('card__like-button_is-active');
-}
 
 function openImage(evt) {
   openModal(popupTypeImage);
@@ -88,7 +87,6 @@ function handleFormSubmitProfile(evt) {
   profileTitle.textContent = name;
   profileDescription.textContent = job;
   closeModal(popupEditProfile);
-
 }
 
 formElementProfile.addEventListener('submit', handleFormSubmitProfile);
@@ -96,13 +94,15 @@ formElementProfile.addEventListener('submit', handleFormSubmitProfile);
 function handleFormSubmitCard(evt) {
   evt.preventDefault();
 
-  addCard(prepareCard({name: nameInputCard.value, link: linkInputCard.value}, removeCard, likeCard, openImage));
+  addCard(prepareCard({
+      name: nameInputCard.value,
+      link: linkInputCard.value
+  }, removeCard, likeCard, openImage));
 
   nameInputCard.value = '';
   linkInputCard.value = '';
 
   closeModal(popupNewCard);
-
 }
 
-formElementCard.addEventListener('submit', handleFormSubmitCard); 
+formElementCard.addEventListener('submit', handleFormSubmitCard);
