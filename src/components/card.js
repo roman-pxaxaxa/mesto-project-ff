@@ -1,19 +1,22 @@
 const cardTemplate = document.querySelector('#card-template').content;
 const cardsList = document.querySelector('.places__list'); // list of cards
 
-function prepareCard(cardData, removeCallback, likeCallback, openImageCallback) {
+function prepareCard(cardData, callbacks) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
+  const cardTitle = cardElement.querySelector('.card__title')
   const cardLike = cardElement.querySelector('.card__like-button');
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
-  cardImage.textContent  = cardData.name;
-  cardImage.addEventListener('click', openImageCallback);
-  cardLike.addEventListener('click', likeCallback);
+  cardTitle.textContent  = cardData.name;
+  cardImage.addEventListener('click', function() {
+    callbacks.openImageFullScreen(cardData.name, cardData.link);
+  });
+  cardLike.addEventListener('click', callbacks.like);
 
   const removeButton = cardElement.querySelector('.card__delete-button');
   removeButton.addEventListener('click', () => {
-    removeCallback(cardElement);
+    callbacks.remove(cardElement);
   });
 
   return cardElement;
