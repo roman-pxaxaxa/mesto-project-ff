@@ -10,13 +10,13 @@ function prepareCard(cardData, callbacks) {
   cardImage.alt = cardData.name;
   cardTitle.textContent  = cardData.name;
   cardImage.addEventListener('click', function() {
-    callbacks.openImageFullScreen(cardData.name, cardData.link);
+    callbacks.openImage(cardData.name, cardData.link);
   });
-  cardLike.addEventListener('click', callbacks.like);
+  cardLike.addEventListener('click', callbacks.likeCard);
 
   const removeButton = cardElement.querySelector('.card__delete-button');
   removeButton.addEventListener('click', () => {
-    callbacks.remove(cardElement);
+    callbacks.removeCard(cardElement);
   });
 
   return cardElement;

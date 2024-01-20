@@ -73,7 +73,12 @@ popupTypeImageClose.addEventListener('click', function() {
 });
 
 initialCards.forEach((cardData) => { // add all cards from array loop
-  addCard(prepareCard(cardData, {remove: removeCard, like: likeCard, openImageFullScreen: openImage}));
+  addCard(prepareCard(cardData,
+    {
+      removeCard,
+      likeCard,
+      openImage
+    }));
 });
 
 popupEditProfile.addEventListener('mousedown', closeModalOverlay);
@@ -99,9 +104,9 @@ function handleFormSubmitCard(evt) {
       name: nameInputCard.value,
       link: linkInputCard.value
   }, {
-      remove: removeCard,
-      remove: likeCard,
-      openImageFullScreen: openImage
+      removeCard,
+      likeCard,
+      openImage
   }));
 
   evt.target.reset()
