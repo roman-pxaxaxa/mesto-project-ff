@@ -1,117 +1,170 @@
+import * as values from './components/values'
 import {
   prepareCard,
-  addCard,
-  removeCard,
-  likeCard
+  addCard
 } from "./components/card.js";
-import {
-  initialCards
-} from './components/cards'
 import {
   openModal,
   closeModal,
   closeModalOverlay
 } from "./components/modal.js";
+import {
+  enableValidation,
+  clearValidation
+} from './components/validation.js'
+import {
+  getRequest,
+  makeRequestByType
+} from './components/api.js';
 import './pages/index.css';
 
+let profileId;
 
-const profileEditButton = document.querySelector('.profile__edit-button'); // profile edit button
-const profileAddButton = document.querySelector('.profile__add-button'); // profile add button
-
-const popupEditProfile = document.querySelector('.popup_type_edit');
-const popupEditProfileClose = popupEditProfile.querySelector('.popup__close');
-const popupNewCard = document.querySelector('.popup_type_new-card');
-const popupNewCardClose = popupNewCard.querySelector('.popup__close');
-const popupTypeImage = document.querySelector('.popup_type_image');
-const popupImage = popupTypeImage.querySelector('.popup__image');
-const popupCaption = popupTypeImage.querySelector('.popup__caption');
-const popupTypeImageClose = popupTypeImage.querySelector('.popup__close');
-
-const formElementProfile = document.forms['edit-profile'];
-const nameInputProfile = formElementProfile.querySelector('.popup__input_type_name');
-const jobInputProfile = formElementProfile.querySelector('.popup__input_type_description');
-
-const formElementCard = document.forms['new-place'];
-const nameInputCard = formElementCard.querySelector('.popup__input_type_card-name');
-const linkInputCard = formElementCard.querySelector('.popup__input_type_url');
-
-const profileDescription = document.querySelector('.profile__description');
-const profileTitle = document.querySelector('.profile__title');
-
-
-function openImage(name, link) {
-  popupImage.src = link;
-  popupImage.alt = name;
-  popupCaption.textContent = name;
-  openModal(popupTypeImage);
+function initCards(cards) {
+  cards.reverse().forEach((cardData) => {
+    addCard(prepareCard(cardData, openImage, profileId));
+  });
 }
 
-profileAddButton.addEventListener('click', function() {
-  openModal(popupNewCard);
+function initProfile(profile) {
+  profileId = profile._id;
+  values.profileTitle.textContent = profile.name;
+  values.profileDescription.textContent = profile.about;
+  values.profileImage.style.backgroundImage = `url(${profile.avatar})`
+}
+
+Promise.all([getRequest('users/me'), getRequest('cards')])
+  .then(([profile, cards]) => {
+    initProfile(profile);
+    initCards(cards);
+  });
+
+function openImage(name, link) {
+  values.popupImage.src = link;
+  values.popupImage.alt = name;
+  values.popupCaption.textContent = name;
+  openModal(values.popupTypeImage);
+}
+
+values.profileAddButton.addEventListener('click', function() {
+  clearValidation(values.formElementCard, values.validationConfig);
+  openModal(values.popupNewCard);
 });
 
 function keepProfileData() {
-  jobInputProfile.value = profileDescription.textContent;
-  nameInputProfile.value = profileTitle.textContent;
+  values.jobInputProfile.value = values.profileDescription.textContent;
+  values.nameInputProfile.value = values.profileTitle.textContent;
 }
 
-profileEditButton.addEventListener('click', function() {
+values.profileEditButton.addEventListener('click', function() {
   keepProfileData();
-  openModal(popupEditProfile);
+  clearValidation(values.formElementProfile, values.validationConfig);
+  openModal(values.popupEditProfile);
 });
 
-popupNewCardClose.addEventListener('click', function() {
-  closeModal(popupNewCard);
+values.profileImage.addEventListener('click', () => {
+  clearValidation(values.formElementAvatar, values.validationConfig);
+  openModal(values.popupAvatar);
+})
+
+values.popupNewCardClose.addEventListener('click', function() {
+  closeModal(values.popupNewCard);
 });
 
-popupEditProfileClose.addEventListener('click', function() {
-  closeModal(popupEditProfile);
+values.popupEditProfileClose.addEventListener('click', function() {
+  closeModal(values.popupEditProfile);
 });
 
-popupTypeImageClose.addEventListener('click', function() {
-  closeModal(popupTypeImage);
+values.popupTypeImageClose.addEventListener('click', function() {
+  closeModal(values.popupTypeImage);
 });
 
-initialCards.forEach((cardData) => { // add all cards from array loop
-  addCard(prepareCard(cardData,
-    {
-      removeCard,
-      likeCard,
-      openImage
-    }));
+values.popupRemoveCardClose.addEventListener('click', function() {
+  closeModal(values.popupRemoveCard);
 });
 
-popupEditProfile.addEventListener('mousedown', closeModalOverlay);
-popupNewCard.addEventListener('mousedown', closeModalOverlay);
-popupTypeImage.addEventListener('mousedown', closeModalOverlay);
+values.popupAvatarClose.addEventListener('click', function() {
+  closeModal(values.popupAvatar);
+});
+
+values.popupEditProfile.addEventListener('mousedown', closeModalOverlay);
+values.popupNewCard.addEventListener('mousedown', closeModalOverlay);
+values.popupTypeImage.addEventListener('mousedown', closeModalOverlay);
+values.popupRemoveCard.addEventListener('mousedown', closeModalOverlay);
+values.popupAvatar.addEventListener('mousedown', closeModalOverlay);
 
 function handleFormSubmitProfile(evt) {
   evt.preventDefault();
-  const job = jobInputProfile.value;
-  const name = nameInputProfile.value;
 
-  profileTitle.textContent = name;
-  profileDescription.textContent = job;
-  closeModal(popupEditProfile);
+  const buttonText = values.popupEditProfileButton.textContent;
+  values.popupEditProfileButton.textContent = values.savingPhrase;
+
+  makeRequestByType('PATCH', 'users/me', {
+      name: values.nameInputProfile.value,
+      about: values.jobInputProfile.value
+    })
+    .then((profile) => {
+      values.profileTitle.textContent = profile.name;
+      values.profileDescription.textContent = profile.about;
+      closeModal(values.popupEditProfile);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      values.popupEditProfileButton.textContent = buttonText;
+      evt.target.reset()
+    });
 }
-
-formElementProfile.addEventListener('submit', handleFormSubmitProfile);
 
 function handleFormSubmitCard(evt) {
   evt.preventDefault();
 
-  addCard(prepareCard({
-      name: nameInputCard.value,
-      link: linkInputCard.value
-  }, {
-      removeCard,
-      likeCard,
-      openImage
-  }));
+  const buttonText = values.popupNewCardButton.textContent;
+  values.popupNewCardButton.textContent = values.savingPhrase;
 
-  evt.target.reset()
-
-  closeModal(popupNewCard);
+  makeRequestByType('POST', 'cards', {
+      name: values.nameInputCard.value,
+      link: values.linkInputCard.value
+    })
+    .then((card) => {
+      console.log(card);
+      addCard(prepareCard(card, openImage, profileId));
+      closeModal(values.popupNewCard);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      values.popupNewCardButton.textContent = buttonText;
+      evt.target.reset()
+    });
 }
 
-formElementCard.addEventListener('submit', handleFormSubmitCard);
+function handleFormSubmitAvatar(evt) {
+  evt.preventDefault();
+
+  const buttonText = values.popupAvatarButton.textContent;
+  values.popupAvatarButton.textContent = values.updatingPhrase;
+
+  makeRequestByType('PATCH', '/users/me/avatar', {
+      avatar: values.popupAvatarInput.value
+    })
+    .then((res) => {
+      console.log(res);
+      values.profileImage.style.backgroundImage = `url(${res.avatar})`;
+      closeModal(values.popupAvatar);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      values.popupAvatarButton.textContent = buttonText;
+      evt.target.reset();
+    });
+}
+
+values.formElementCard.addEventListener('submit', handleFormSubmitCard);
+values.formElementProfile.addEventListener('submit', handleFormSubmitProfile);
+values.formElementAvatar.addEventListener('submit', handleFormSubmitAvatar);
+enableValidation(values.validationConfig);
