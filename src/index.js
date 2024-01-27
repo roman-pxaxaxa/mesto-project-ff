@@ -1,7 +1,8 @@
 import * as values from './components/values'
 import {
   prepareCard,
-  addCard
+  removeCard,
+  likeCard
 } from "./components/card.js";
 import {
   openModal,
@@ -20,9 +21,13 @@ import './pages/index.css';
 
 let profileId;
 
+function addCard(cardElement) {
+  values.cardsList.prepend(cardElement);
+}
+
 function initCards(cards) {
   cards.reverse().forEach((cardData) => {
-    addCard(prepareCard(cardData, openImage, profileId));
+    addCard(prepareCard(cardData, openImage, likeCard, removeCard, profileId));
   });
 }
 
@@ -37,6 +42,9 @@ Promise.all([getRequest('users/me'), getRequest('cards')])
   .then(([profile, cards]) => {
     initProfile(profile);
     initCards(cards);
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
 function openImage(name, link) {
@@ -67,24 +75,9 @@ values.profileImage.addEventListener('click', () => {
   openModal(values.popupAvatar);
 })
 
-values.popupNewCardClose.addEventListener('click', function() {
-  closeModal(values.popupNewCard);
-});
-
-values.popupEditProfileClose.addEventListener('click', function() {
-  closeModal(values.popupEditProfile);
-});
-
-values.popupTypeImageClose.addEventListener('click', function() {
-  closeModal(values.popupTypeImage);
-});
-
-values.popupRemoveCardClose.addEventListener('click', function() {
-  closeModal(values.popupRemoveCard);
-});
-
-values.popupAvatarClose.addEventListener('click', function() {
-  closeModal(values.popupAvatar);
+values.popupCloseButtons.forEach((button) => {
+  const popup = button.closest('.popup');
+  button.addEventListener('click', () => closeModal(popup));
 });
 
 values.popupEditProfile.addEventListener('mousedown', closeModalOverlay);
@@ -107,13 +100,13 @@ function handleFormSubmitProfile(evt) {
       values.profileTitle.textContent = profile.name;
       values.profileDescription.textContent = profile.about;
       closeModal(values.popupEditProfile);
+      evt.target.reset();
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
       values.popupEditProfileButton.textContent = buttonText;
-      evt.target.reset()
     });
 }
 
@@ -129,7 +122,7 @@ function handleFormSubmitCard(evt) {
     })
     .then((card) => {
       console.log(card);
-      addCard(prepareCard(card, openImage, profileId));
+      addCard(prepareCard(card, openImage, likeCard, removeCard, profileId));
       closeModal(values.popupNewCard);
     })
     .catch((err) => {

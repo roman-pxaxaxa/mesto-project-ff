@@ -6,11 +6,12 @@ function enableValidation(validationConfig) {
 }
 
 function clearValidation(formElement, validationConfig) {
-  const errorElements = Array.from(formElement.querySelectorAll('.popup__input-error'));
-  errorElements.forEach((errorElement) => {
-    errorElement.textContent = '';
-    errorElement.classList.remove(validationConfig.errorClass);
+  const inputElements = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+  inputElements.forEach((inputElement) => {
+    hideInputError(formElement, inputElement, validationConfig);
   });
+  toggleButtonState(inputElements, buttonElement, validationConfig);
 }
 
 const hasInvalidInput = (inputList) => {
@@ -22,8 +23,10 @@ const hasInvalidInput = (inputList) => {
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = true;
   } else {
     buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = false;
   }
 };
 

@@ -11,10 +11,10 @@ import {
 } from "./values";
 
 const cardTemplate = document.querySelector('#card-template').content;
-const cardsList = document.querySelector('.places__list');
+
 let cardToRemove;
 
-function prepareCard(cardData, openImage, profileId, from_server = true) {
+function prepareCard(cardData, openImage, likeCard, removeCard, profileId) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title')
@@ -51,10 +51,6 @@ function prepareCard(cardData, openImage, profileId, from_server = true) {
   return cardElement;
 }
 
-function addCard(cardElement) {
-  cardsList.prepend(cardElement);
-}
-
 function removeCard() {
   makeRequestByType('DELETE', `cards/${cardToRemove.data._id}`, null)
     .then(() => {
@@ -82,5 +78,6 @@ function likeCard(likeElement, cardId) {
 
 export {
   prepareCard,
-  addCard
+  removeCard,
+  likeCard
 }

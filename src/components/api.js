@@ -1,36 +1,34 @@
-const cohortId = 'wff-cohort-4';
-const token = '008f1cc3-73b7-4777-9b97-32f6f0126a51';
+import { checkResponse } from "../utils/utils";
+
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-4/',
+  headers: {
+    authorization: '008f1cc3-73b7-4777-9b97-32f6f0126a51',
+    'Content-Type': 'application/json',
+  }
+}
 
 function getRequest(path) {
-  return fetch(`https://nomoreparties.co/v1/${cohortId}/${path}`, {
-      headers: {
-        authorization: token
-      }
+  return fetch(config.baseUrl + path, {
+      headers: config.headers
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
+    .then(checkResponse)
+    .catch((err) => {
+      console.log(err);
     });
 };
 
 function makeRequestByType(type, path, data) {
-  return fetch(`https://nomoreparties.co/v1/${cohortId}/${path}`, {
+  return fetch(config.baseUrl + path, {
       method: type,
-      headers: {
-        authorization: token,
-        'Content-Type': 'application/json'
-      },
+      headers: config.headers,
       ...(data && {
         body: JSON.stringify(data)
       })
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
+    .then(checkResponse)
+    .catch((err) => {
+      console.log(err);
     });
 };
 

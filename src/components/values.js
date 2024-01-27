@@ -2,21 +2,18 @@ export const profileEditButton = document.querySelector('.profile__edit-button')
 export const profileAddButton = document.querySelector('.profile__add-button');
 export const popupEditProfile = document.querySelector('.popup_type_edit');
 export const popupEditProfileButton = popupEditProfile.querySelector('.button');
-export const popupEditProfileClose = popupEditProfile.querySelector('.popup__close');
 export const popupNewCard = document.querySelector('.popup_type_new-card');
 export const popupNewCardButton = popupNewCard.querySelector('.button');
-export const popupNewCardClose = popupNewCard.querySelector('.popup__close');
 export const popupTypeImage = document.querySelector('.popup_type_image');
 export const popupImage = popupTypeImage.querySelector('.popup__image');
 export const popupCaption = popupTypeImage.querySelector('.popup__caption');
-export const popupTypeImageClose = popupTypeImage.querySelector('.popup__close');
 export const popupRemoveCard = document.querySelector('.popup_type_remove-card');
 export const popupRemoveCardSubmit = popupRemoveCard.querySelector('.button');
-export const popupRemoveCardClose = popupRemoveCard.querySelector('.popup__close');
 export const popupAvatar = document.querySelector('.popup_type_edit-avatar');
 export const popupAvatarInput = popupAvatar.querySelector('.popup__input');
 export const popupAvatarButton = popupAvatar.querySelector('.button');
-export const popupAvatarClose = popupAvatar.querySelector('.popup__close');
+
+export const popupCloseButtons = document.querySelectorAll('.popup__close');
 
 export const formElementAvatar = document.forms['edit-avatar'];
 
@@ -31,6 +28,8 @@ export const linkInputCard = formElementCard.querySelector('.popup__input_type_u
 export const profileDescription = document.querySelector('.profile__description');
 export const profileTitle = document.querySelector('.profile__title');
 export const profileImage = document.querySelector('.profile__image');
+
+export const cardsList = document.querySelector('.places__list');
 
 export const validationConfig = {
   formSelector: '.popup__form',
