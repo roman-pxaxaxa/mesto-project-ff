@@ -12,10 +12,7 @@ function getRequest(path) {
   return fetch(config.baseUrl + path, {
       headers: config.headers
     })
-    .then(checkResponse)
-    .catch((err) => {
-      console.log(err);
-    });
+    .then(checkResponse);
 };
 
 function makeRequestByType(type, path, data) {
@@ -26,10 +23,7 @@ function makeRequestByType(type, path, data) {
         body: JSON.stringify(data)
       })
     })
-    .then(checkResponse)
-    .catch((err) => {
-      console.log(err);
-    });
+    .then(checkResponse);
 };
 
 export {
